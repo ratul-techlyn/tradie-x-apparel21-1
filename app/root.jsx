@@ -5,6 +5,8 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 export default function App() {
   return (
@@ -21,9 +23,11 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
+        <Provider store={store}>
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+        </Provider>
       </body>
     </html>
   );

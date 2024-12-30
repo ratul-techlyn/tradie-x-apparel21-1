@@ -5,21 +5,23 @@ import {
   Pagination,
   Button,
   Text,
+  Badge,
 } from "@shopify/polaris";
 import { useState, useEffect } from "react";
+import { formatUpdatedAt } from "../helper/helper";
 
-export default function Products({allProducts}) {
-
-
+export default function Products({ tableProducts }) {
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 30;
 
-  // Filter products based on search input (product name or SKU)
-  const filteredProducts = allProducts.filter(
+  // Filter products based on search input (product name, SKU, barcode, or product code)
+  const filteredProducts = tableProducts.filter(
     (product) =>
-      product.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      product.sku.toLowerCase().includes(searchValue.toLowerCase()),
+      product.product_name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      product.sku.toLowerCase().includes(searchValue.toLowerCase()) ||
+      product.barcode.toLowerCase().includes(searchValue.toLowerCase()) ||
+      product.product_code.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
   // Pagination logic
@@ -31,19 +33,34 @@ export default function Products({allProducts}) {
 
   // Rows for DataTable
   const rows = paginatedProducts.map(
-    ({ id, variantId, name, barcode, sku }) => [
-      id,
-      variantId,
-      name,
+    ({
+      product_id,
+      product_code,
+      variant_id,
       barcode,
+      product_name,
       sku,
-      <Button onClick={() => alert(`Editing product ${id}`)}>Edit</Button>,
+      updated_at,
+      status,
+    }) => [
+      product_id,
+      product_code,
+      variant_id,
+      barcode,
+      product_name,
+      sku,
+      <Badge tone={status ? "success" : "warning"}>
+        {status ? "Updated" : "Updated at " + formatUpdatedAt(updated_at)}
+      </Badge>,
+      <Button onClick={() => alert(`Editing product ${product_id}`)}>
+        Edit
+      </Button>,
     ],
   );
-  
+
   return (
     <Card>
-      {/* heading */}
+      {/* Heading */}
       <div style={{ marginBottom: "20px" }}>
         <Text variant="headingLg" as="h2">
           All Products
@@ -59,7 +76,7 @@ export default function Products({allProducts}) {
             setSearchValue(value);
             setCurrentPage(1); // Reset to first page when search changes
           }}
-          placeholder="Search by product name or SKU"
+          placeholder="Search by product name or SKU or barcode or product code"
           clearButton
           onClearButtonClick={() => setSearchValue("")}
         />
@@ -68,13 +85,24 @@ export default function Products({allProducts}) {
       {/* Data Table */}
       {filteredProducts.length > 0 ? (
         <DataTable
-          columnContentTypes={["text", "text", "text", "text", "text", "text"]}
+          columnContentTypes={[
+            "text",
+            "text",
+            "text",
+            "text",
+            "text",
+            "text",
+            "text",
+            "text",
+          ]}
           headings={[
             "Product Id",
+            "Product Code",
             "Variant Id",
-            "Product Name",
             "Barcode",
+            "Product Name",
             "SKU",
+            "Update Status",
             "Action",
           ]}
           rows={rows}
