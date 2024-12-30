@@ -13,6 +13,10 @@ RUN npm ci --omit=dev && npm cache clean --force
 # Remove this line if you want to run CLI commands in your container.
 RUN npm remove @shopify/cli
 
+# install openssl
+RUN apk update && apk upgrade
+RUN apk add --no-cache openssl
+
 COPY . .
 
 RUN npm run build
