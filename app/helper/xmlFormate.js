@@ -34,7 +34,7 @@ export function createOrderXml(order) {
   const transaction = order.transactions?.[0] || {};
   const paymentDetails = transaction.paymentDetails || {};
 
-  const priceField = "originalUnitPriceSet"; // originalUnitPriceSet  discountedUnitPriceAfterAllDiscountsSet
+  const priceField = "discountedUnitPriceAfterAllDiscountsSet"; // originalUnitPriceSet  discountedUnitPriceAfterAllDiscountsSet
 
   const shippingIdMap = {
     "Australia Post Standard": 861,
